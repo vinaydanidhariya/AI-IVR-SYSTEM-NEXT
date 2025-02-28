@@ -73,7 +73,7 @@ const LoginPage = () => {
     if (email === 'admin@admin.com' && password === 'SHC@778899') {
       router.push('/dashboard')
     } else {
-      // Handle errors
+      alert('Invalid email or password. Please try again.')
     }
   }
 
