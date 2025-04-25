@@ -43,7 +43,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '28rem' }
 }))
 
-const LinkStyled = styled('a')(({ theme }) => ({
+// Update LinkStyled to extend Link component for Next.js 15 compatibility
+const LinkStyled = styled(Link)(({ theme }) => ({
   fontSize: '0.875rem',
   textDecoration: 'none',
   color: theme.palette.primary.main
@@ -217,9 +218,7 @@ const RegisterPage = () => {
               label={
                 <Fragment>
                   <span>I agree to </span>
-                  <Link href='/' passHref>
-                    <LinkStyled onClick={e => e.preventDefault()}>privacy policy & terms</LinkStyled>
-                  </Link>
+                  <LinkStyled href='/'>privacy policy & terms</LinkStyled>
                 </Fragment>
               }
             />
@@ -231,35 +230,25 @@ const RegisterPage = () => {
                 Already have an account?
               </Typography>
               <Typography variant='body2'>
-                <Link passHref href='/pages/login'>
-                  <LinkStyled>Sign in instead</LinkStyled>
-                </Link>
+                <LinkStyled href='/pages/login'>Sign in instead</LinkStyled>
               </Typography>
             </Box>
             <Divider sx={{ my: 5 }}>or</Divider>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={e => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
+              <IconButton component={Link} href='/' aria-label='facebook'>
+                <Facebook sx={{ color: '#497ce2' }} />
+              </IconButton>
+              <IconButton component={Link} href='/' aria-label='twitter'>
+                <Twitter sx={{ color: '#1da1f2' }} />
+              </IconButton>
+              <IconButton component={Link} href='/' aria-label='github'>
+                <Github
+                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
+                />
+              </IconButton>
+              <IconButton component={Link} href='/' aria-label='google'>
+                <Google sx={{ color: '#db4437' }} />
+              </IconButton>
             </Box>
           </form>
         </CardContent>

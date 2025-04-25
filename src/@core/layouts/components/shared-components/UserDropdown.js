@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -35,9 +35,26 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
+  const [userData, setUserData] = useState(null)
+  const [mounted, setMounted] = useState(false)
 
   // ** Hooks
   const router = useRouter()
+
+  useEffect(() => {
+    // Set mounted to true to indicate component has mounted on client
+    setMounted(true)
+    
+    // Get user data from localStorage
+    const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+    if (user) {
+      try {
+        setUserData(JSON.parse(user))
+      } catch (error) {
+        console.error('Error parsing user data:', error)
+      }
+    }
+  }, [])
 
   const handleDropdownOpen = event => {
     setAnchorEl(event.currentTarget)
@@ -47,6 +64,20 @@ const UserDropdown = () => {
     if (url) {
       router.push(url)
     }
+    setAnchorEl(null)
+  }
+
+  const handleLogout = () => {
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
+    
+    // Redirect to login page
+    router.push('/')
+    
+    // Close dropdown
     setAnchorEl(null)
   }
 
@@ -64,6 +95,11 @@ const UserDropdown = () => {
     }
   }
 
+  // Only render on client side to prevent hydration errors
+  if (!mounted) {
+    return null
+  }
+
   return (
     <Fragment>
       <Badge
@@ -74,7 +110,7 @@ const UserDropdown = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Avatar
-          alt='Vinay Danidhariya'
+          alt={userData?.email || 'User'}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           src='/images/avatars/1.png'
@@ -95,12 +131,12 @@ const UserDropdown = () => {
               badgeContent={<BadgeContentSpan />}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-              <Avatar alt='vinay danidhariya' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt={userData?.email || 'User'} src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>Vinay Danidhariya</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{userData?.email?.split('@')[0] || 'User'}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
+                {userData?.role || 'User'}
               </Typography>
             </Box>
           </Box>
@@ -144,7 +180,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

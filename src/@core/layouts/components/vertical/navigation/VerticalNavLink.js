@@ -1,6 +1,7 @@
 // ** Next Imports
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Chip from '@mui/material/Chip'
@@ -50,6 +51,12 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
   // ** Hooks
   const router = useRouter()
   const IconTag = item.icon
+  const [mounted, setMounted] = useState(false)
+
+  // Add client-side only effect
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isNavLinkActive = () => {
     if (router.pathname === item.path || handleURLQueries(router, item.path)) {
@@ -57,6 +64,21 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
     } else {
       return false
     }
+  }
+
+  const handleClick = e => {
+    if (item.path === undefined) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    if (navVisible) {
+      toggleNavVisibility()
+    }
+  }
+
+  // Don't render during SSR to prevent hydration errors
+  if (!mounted) {
+    return null
   }
 
   return (
@@ -68,18 +90,10 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
     >
       <Link passHref href={item.path === undefined ? '/' : `${item.path}`}>
         <MenuNavLink
-          component={'a'}
+          component='a'
           className={isNavLinkActive() ? 'active' : ''}
           {...(item.openInNewTab ? { target: '_blank' } : null)}
-          onClick={e => {
-            if (item.path === undefined) {
-              e.preventDefault()
-              e.stopPropagation()
-            }
-            if (navVisible) {
-              toggleNavVisibility()
-            }
-          }}
+          onClick={handleClick}
           sx={{
             pl: 5.5,
             ...(item.disabled ? { pointerEvents: 'none' } : { cursor: 'pointer' })

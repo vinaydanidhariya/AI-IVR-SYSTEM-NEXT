@@ -1,5 +1,8 @@
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
+import { styled } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 
 // ** Icons Imports
 import Poll from 'mdi-material-ui/Poll'
@@ -22,24 +25,46 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 
+// ** Auth HOC
+import withAuth from 'src/utils/withAuth'
+
+// Enhanced styled component for grid items
+const StyledGridItem = styled(Grid)(({ theme }) => ({
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '& > div': {
+    height: '100%',
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+    overflow: 'hidden',
+    transition: 'box-shadow 0.3s ease',
+    '&:hover': {
+      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)'
+    }
+  }
+}))
+
 const Dashboard = () => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'))
+
   return (
     <ApexChartWrapper>
-      <Grid container spacing={6}>
-        {/* <Grid item xs={12} md={4}>
+      <Grid container spacing={isMobile ? 3 : 6}>
+        <StyledGridItem item xs={12} md={4}>
           <Trophy />
-        </Grid>
-        <Grid item xs={12} md={8}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={8}>
           <StatisticsCard />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={6} lg={4}>
           <WeeklyOverview />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={6} lg={4}>
           <TotalEarning />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <Grid container spacing={6}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={6} lg={4}>
+          <Grid container spacing={isMobile ? 2 : 6}>
             <Grid item xs={6}>
               <CardStatisticsVerticalComponent
                 stats='$25.6k'
@@ -83,19 +108,19 @@ const Dashboard = () => {
               />
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={6} lg={4}>
           <SalesByCountries />
-        </Grid>
-        <Grid item xs={12} md={12} lg={8}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12} md={12} lg={8}>
           <DepositWithdraw />
-        </Grid> */}
-        <Grid item xs={12}>
+        </StyledGridItem>
+        <StyledGridItem item xs={12}>
           <Table />
-        </Grid>
+        </StyledGridItem>
       </Grid>
     </ApexChartWrapper>
   )
 }
 
-export default Dashboard
+export default withAuth(Dashboard)

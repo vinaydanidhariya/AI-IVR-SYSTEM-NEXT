@@ -1,11 +1,17 @@
 const path = require('path')
 
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true, // Enable strict mode for better error handling
   experimental: {
     esmExternals: true,
-    jsconfigPaths: true // enables it for both jsconfig.json and tsconfig.json
+    // jsconfigPaths is no longer needed in Next.js 15
+  },
+  // Fix hydration issues by disabling SSR for pages with localStorage/authentication
+  // This helps with components that need to access localStorage
+  compiler: {
+    styledComponents: true, // Enables styled-components compatibility
   },
   webpack: config => {
     config.resolve.alias = {
@@ -16,3 +22,5 @@ module.exports = {
     return config
   }
 }
+
+module.exports = nextConfig

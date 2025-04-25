@@ -27,19 +27,51 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 const Card = styled(MuiCard)(({ theme }) => ({
-  [theme.breakpoints.up('sm')]: { width: '28rem' }
+  [theme.breakpoints.down('sm')]: { 
+    width: '90%',
+    margin: '0 auto',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+  },
+  [theme.breakpoints.up('sm')]: { 
+    width: '28rem',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)'
+    }
+  }
 }))
 
 const LinkStyled = styled('a')(({ theme }) => ({
   fontSize: '0.875rem',
   textDecoration: 'none',
-  color: theme.palette.primary.main
+  color: theme.palette.primary.main,
+  fontWeight: 500,
+  transition: 'color 0.2s ease',
+  '&:hover': {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline'
+  }
 }))
 
 const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
   '& .MuiFormControlLabel-label': {
     fontSize: '0.875rem',
     color: theme.palette.text.secondary
+  }
+}))
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  transition: 'all 0.2s ease-in-out',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 6px 15px rgba(0, 0, 0, 0.25)'
+  },
+  '&:active': {
+    transform: 'translateY(0)',
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.15)'
   }
 }))
 
@@ -70,17 +102,46 @@ const LoginPage = () => {
     const email = values.email
     const password = values.password
 
-    if (email === 'admin@admin.com' && password === 'SHC@778899') {
-      router.push('/dashboard')
-    } else {
-      alert('Invalid email or password. Please try again.')
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Save token to localStorage (client-side only)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('user', JSON.stringify(data.user))
+        }
+        
+        // Redirect to dashboard
+        router.push('/dashboard')
+      } else {
+        alert(data.error || 'Login failed. Please check your credentials.')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      alert('An error occurred during login. Please try again.')
     }
   }
 
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <CardContent sx={{ 
+          padding: theme => {
+            return { 
+              xs: `${theme.spacing(8, 5, 5)} !important`,
+              sm: `${theme.spacing(12, 9, 7)} !important` 
+            }
+          }
+        }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg
               width={35}
@@ -155,7 +216,11 @@ const LoginPage = () => {
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
-            <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+            <Typography variant='h5' sx={{ 
+              fontWeight: 600, 
+              marginBottom: 1.5,
+              fontSize: { xs: '1.25rem', sm: '1.5rem' }
+            }}>
               Welcome to {themeConfig.templateName}! 👋🏻
             </Typography>
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
@@ -166,9 +231,21 @@ const LoginPage = () => {
               fullWidth
               id='email'
               label='Email'
-              sx={{ marginBottom: 4 }}
+              sx={{ 
+                marginBottom: 4,
+                '& .MuiOutlinedInput-root': {
+                  transition: 'box-shadow 0.2s ease-in-out',
+                  '&:hover, &.Mui-focused': {
+                    boxShadow: '0 0 0 2px rgba(58, 53, 65, 0.1)'
+                  }
+                }
+              }}
               value={values.email}
               onChange={handleChange('email')}
+              placeholder="admin@admin.com"
+              inputProps={{
+                'aria-label': 'Email'
+              }}
             />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
@@ -178,6 +255,16 @@ const LoginPage = () => {
                 id='auth-login-password'
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                sx={{
+                  transition: 'box-shadow 0.2s ease-in-out',
+                  '&:hover, &.Mui-focused': {
+                    boxShadow: '0 0 0 2px rgba(58, 53, 65, 0.1)'
+                  }
+                }}
+                inputProps={{
+                  'aria-label': 'Password'
+                }}
                 endAdornment={
                   <InputAdornment position='end'>
                     <IconButton
@@ -194,21 +281,24 @@ const LoginPage = () => {
             </FormControl>
             <Box
               sx={{
+                mt: 2,
                 mb: 4,
                 display: 'flex',
                 alignItems: 'center',
                 flexWrap: 'wrap',
-                justifyContent: 'space-between'
+                justifyContent: { xs: 'center', sm: 'space-between' },
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 2, sm: 0 }
               }}
             >
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
-              <Link passHref href='/'>
-                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
+              <Link href='/' passHref legacyBehavior>
+                <LinkStyled>Forgot Password?</LinkStyled>
               </Link>
             </Box>
-            <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} onClick={handleSubmit}>
+            <StyledButton fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type="submit">
               Login
-            </Button>
+            </StyledButton>
             <Box
               sx={{
                 display: 'flex',
@@ -221,7 +311,7 @@ const LoginPage = () => {
                 New on our platform?
               </Typography>
               <Typography variant='body2'>
-                <Link passHref href='/pages/register'>
+                <Link href='/pages/register' passHref legacyBehavior>
                   <LinkStyled>Create an account</LinkStyled>
                 </Link>
               </Typography>

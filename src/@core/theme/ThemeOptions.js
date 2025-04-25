@@ -1,6 +1,9 @@
 // ** MUI Theme Provider
 import { deepmerge } from '@mui/utils'
 
+// ** Theme Config Import
+import themeConfig from 'src/configs/themeConfig'
+
 // ** Theme Override Imports
 import palette from './palette'
 import spacing from './spacing'
@@ -11,7 +14,7 @@ const themeOptions = settings => {
   // ** Vars
   const { mode, themeColor } = settings
 
-  const themeConfig = {
+  const coreThemeConfig = {
     palette: palette(mode, themeColor),
     typography: {
       fontFamily: [
@@ -33,19 +36,37 @@ const themeOptions = settings => {
     ...spacing,
     breakpoints: breakpoints(),
     shape: {
-      borderRadius: 6
+      borderRadius: themeConfig.borderRadius || 6
     },
     mixins: {
       toolbar: {
         minHeight: 64
       }
+    },
+    transitions: {
+      duration: {
+        shortest: themeConfig.transitionDuration * 0.1,
+        shorter: themeConfig.transitionDuration * 0.2,
+        short: themeConfig.transitionDuration * 0.4,
+        standard: themeConfig.transitionDuration,
+        complex: themeConfig.transitionDuration * 1.2,
+        enteringScreen: themeConfig.transitionDuration * 0.8,
+        leavingScreen: themeConfig.transitionDuration * 0.6
+      },
+      easing: {
+        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
+        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+        sharp: 'cubic-bezier(0.4, 0, 0.6, 1)'
+      }
     }
   }
 
-  return deepmerge(themeConfig, {
+  return deepmerge(coreThemeConfig, {
     palette: {
       primary: {
-        ...themeConfig.palette[themeColor]
+        ...coreThemeConfig.palette[themeColor],
+        main: themeConfig.defaultPrimaryColor || coreThemeConfig.palette[themeColor].main
       }
     }
   })
