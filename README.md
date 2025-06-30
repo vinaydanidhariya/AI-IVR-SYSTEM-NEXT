@@ -1,6 +1,6 @@
 ### LOGIN CREDENTIALS
 
-Email : user@ai-ivr.com
+Email : test@ai-ivr.com
 Password: test@123
 
 AI IVR SYSTEM 

@@ -70,7 +70,7 @@ const LoginPage = () => {
     const email = values.email
     const password = values.password
 
-    if (email === 'user@ai-ivr.com' && password === 'test@123') {
+    if (email === 'test@ai-ivr.com' && password === 'test@123') {
       router.push('/dashboard')
     } else {
       alert('Invalid email or password. Please try again.')
