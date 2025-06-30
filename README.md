@@ -1,6 +1,6 @@
 ### LOGIN CREDENTIALS
 
-Email : admin@gmail.com
+Email : admin@admin.com
 Password: SHC@778899
 
 AI IVR SYSTEM 
