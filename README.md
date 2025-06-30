@@ -1,7 +1,7 @@
 ### LOGIN CREDENTIALS
 
-Email : admin@admin.com
-Password: SHC@778899
+Email : user@ai-ivr.com
+Password: test@123
 
 AI IVR SYSTEM 
 
