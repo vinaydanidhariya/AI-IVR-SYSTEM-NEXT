@@ -9,7 +9,7 @@ import { firstMessage, name, prompt } from "../../utils/CONSTANTS";
 
 
 // Put your Vapi Public Key below.
-const vapi = new Vapi("8118c26c-2258-437e-bc0a-773e839a459b");
+const vapi = new Vapi("31d08a01-0e53-4b1a-807b-c4918807d5e6");
 
 const App = () => {
   const [connecting, setConnecting] = useState(false);
